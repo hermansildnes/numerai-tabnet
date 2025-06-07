@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 import joblib
 
+# Gets prediction using the pretrained model
 def main():
     # Load the model
     model = torch.load("/home/error/downloads/TabNet_.pt", weights_only=False)
@@ -21,20 +22,7 @@ def main():
     # Load live data
     live_data = pd.read_parquet("live.parquet", columns=features)
     
-    # CRITICAL: You need to apply the SAME preprocessing as during training!
-    # You should have saved the scaler during training, but if not:
-    # Option 1: Load the scaler if you saved it
-    # scaler = joblib.load("scaler.pkl")  # You should save this during training
-    
-    # Option 2: If you don't have the saved scaler, you need to recreate it
-    # This is NOT ideal as it might not match exactly what was used in training
-    #print("WARNING: Recreating scaler - this should match your training preprocessing exactly!")
-    
-    # Load training data to fit scaler (this should match your training exactly) IF NEEDED.
-    #train_data = pd.read_parquet("train.parquet", columns=["era", "target"] + features).dropna()
     scaler = joblib.load("scaler.save")
-    #scaler = StandardScaler()
-    #scaler.fit(train_data[features])  # Fit on training data
     
     # Apply same preprocessing to live data
     live_features_scaled = scaler.transform(live_data[features])
@@ -47,7 +35,7 @@ def main():
         predictions, _ = model(live_tensor)  # TabNet returns (predictions, sparse_loss)    
         submission = pd.Series(predictions.cpu().numpy().flatten(), index=live_data.index).to_frame("prediction")
     
-    # Save submission - FIXED: use to_csv(), not save_csv()
+    # Save submission to csv as numerai expects
     submission.to_csv("submission.csv")
     print(f"Submission saved with {len(submission)} predictions")
     

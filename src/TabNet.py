@@ -106,11 +106,9 @@ class FeatureTransformer(nn.Module):
         for x in range(first, n_ind):
             self.independ.append(GLU(out_dim, out_dim, vbs=vbs))
         
-        # REMOVED: All device references - will be handled by model.to(device)
         self.register_buffer('scale', torch.sqrt(torch.tensor(0.5)))
     
     def forward(self, x):
-        # No need to move scale - it's automatically on the same device as the model
         if self.shared:
             x = self.shared[0](x)
             for glu in self.shared[1:]:
@@ -156,7 +154,6 @@ class TabNet(nn.Module):
     def forward(self, x):
         x = self.bn(x)
         x_a = self.first_step(x)[:, self.n_d:]
-        # REMOVED: All .to(x.device) calls - tensors created with torch.zeros/ones are automatically on the same device
         sparse_loss = torch.zeros(1, device=x.device, dtype=x.dtype)
         out = torch.zeros(x.size(0), self.n_d, device=x.device, dtype=x.dtype)
         priors = torch.ones(x.shape, device=x.device, dtype=x.dtype)

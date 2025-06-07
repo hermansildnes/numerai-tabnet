@@ -1,5 +1,7 @@
 import pandas as pd
 
+# Clips predicted values between 0 and 1 as numerai expects. (Most predictions are, but ensures no outliers)
+# Should be fixed in the model, but this is a quick fix for now.
 def main():
     # Load the submission dataframe
     df = pd.read_csv("~/downloads/submission.csv")

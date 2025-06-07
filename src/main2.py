@@ -10,7 +10,7 @@ import joblib
 
 
 def main():
-    #load_data()
+    load_data() # Download data if not already present
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #device = torch.device("cpu")  # Force CPU for debugging
     print(f"Using device: {device}")
