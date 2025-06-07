@@ -1,4 +1,4 @@
-# TabNet for numerai
+# TabNet Transformer for Financial Data Prediction
 
 ## Overview
 
