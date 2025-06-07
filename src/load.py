@@ -8,7 +8,7 @@ import joblib
 # Gets prediction using the pretrained model
 def main():
     # Load the model
-    model = torch.load("/home/error/downloads/TabNet_.pt", weights_only=False)
+    model = torch.load("model/TabNet_.pt", weights_only=False)
     model.eval()  # Set to evaluation mode
     
     # Set device
@@ -16,13 +16,13 @@ def main():
     model = model.to(device)
     
     # Load features metadata
-    features_metadata = json.load(open("features.json"))
+    features_metadata = json.load(open("data/features.json"))
     features = features_metadata["feature_sets"]["medium"]
     
     # Load live data
-    live_data = pd.read_parquet("live.parquet", columns=features)
+    live_data = pd.read_parquet("data/live.parquet", columns=features)
     
-    scaler = joblib.load("scaler.save")
+    scaler = joblib.load("model/scaler.save")
     
     # Apply same preprocessing to live data
     live_features_scaled = scaler.transform(live_data[features])

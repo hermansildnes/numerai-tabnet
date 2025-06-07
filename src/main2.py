@@ -17,14 +17,14 @@ def main():
 
     print("Loading data...")
 
-    feature_metadata = json.load(open("features.json"))
+    feature_metadata = json.load(open("data/features.json"))
     features = feature_metadata["feature_sets"]["medium"]
-    data = pd.read_parquet("train.parquet", columns=["era", "target"]+features).dropna()
+    data = pd.read_parquet("data/train.parquet", columns=["era", "target"]+features).dropna()
 
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(data[features])
     print("Saving scaler...")
-    joblib.dump(scaler, "scaler.save")
+    joblib.dump(scaler, "model/scaler.save")
     
 
 
@@ -58,21 +58,22 @@ def main():
             train_loss += total_loss.item()
         
         print(f"Epoch {epoch+1}/{125}, Train Loss: {train_loss/len(train_loader):.4f}")
-
+    
+    torch.save(model, "model/TabNet_.pt", weights_only=False)
 
 def load_data():
     api = NumerAPI()
     api.download_dataset(
         "v5.0/train.parquet",
-        "train.parquet"
+        "data/train.parquet"
         )
     api.download_dataset(
         f"v5.0/features.json",
-        "features.json"
+        "data/features.json"
         )
     api.download_dataset(
 	    "v5.0/live.parquet",
-	    "live.parquet"
+	    "data/live.parquet"
         )
 
 
